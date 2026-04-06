@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Langit Cinta Kita ❤️</title>
+<style>
+body {
+  margin:0;
+  overflow:hidden;
+  font-family:'Arial', sans-serif;
+  background:#0b0c2a;
+  color:white;
+  text-align:center;
+}
+
+h1 { margin-top:20px; font-size:2.5em; }
+p { font-size:1.2em; max-width:600px; margin:auto; }
+
+input {
+  padding:10px;
+  width:60%;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+}
+button {
+  padding:10px 20px;
+  border-radius:20px;
+  border:none;
+  background:#ff4b5c;
+  color:white;
+  cursor:pointer;
+  margin-left:10px;
+}
+.message {
+  background:#2a2a3d;
+  margin:10px;
+  padding:10px;
+  border-radius:10px;
+}
+
+/* Canvas bintang */
+canvas {
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:-1;
+}
+
+/* Hati jatuh */
+.heart {
+  position:fixed;
+  top:-10px;
+  color:red;
+  animation:fall linear forwards;
+}
+@keyframes fall { to { transform:translateY(100vh); } }
+</style>
+</head>
+<body>
+
+<audio id="bgm" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mp3">
+</audio>
+
+<h1>Langit Cinta Kita ✨</h1>
+<p>Ketik pesanmu dan lihat bintang muncul di langit 🌟</p>
+
+<input type="text" id="inputMsg" placeholder="Tulis pesan...">
+<button onclick="saveMsg()">Kirim</button>
+<div id="messages"></div>
+
+<canvas id="starCanvas"></canvas>
+
+<script>
+// Musik
+function startMusic() {
+  document.getElementById("bgm").play();
+}
+startMusic();
+
+// LocalStorage pesan
+let messages = JSON.parse(localStorage.getItem("loveMsgs")) || [];
+function render() {
+  const box = document.getElementById("messages");
+  box.innerHTML="";
+  messages.forEach(msg=>{
+    box.innerHTML+=`<div class="message">${msg}</div>`;
+  });
+}
+function saveMsg() {
+  const input=document.getElementById("inputMsg");
+  if(input.value.trim()!==""){
+    messages.push(input.value);
+    localStorage.setItem("loveMsgs",JSON.stringify(messages));
+    createStar();
+    input.value="";
+    render();
+  }
+}
+render();
+
+// Hati jatuh
+setInterval(()=>{
+  const heart=document.createElement("div");
+  heart.classList.add("heart");
+  heart.innerHTML="❤️";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.animationDuration=(Math.random()*3+2)+"s";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),5000);
+},300);
+
+// Canvas bintang
+const canvas=document.getElementById("starCanvas");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+function createStar(){
+  const x=Math.random()*canvas.width;
+  const y=Math.random()*canvas.height;
+  const r=Math.random()*3+1;
+  ctx.beginPath();
+  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fillStyle="yellow";
+  ctx.fill();
+}
+
+// Auto bintang random
+setInterval(()=>{ createStar(); },500);
+
+// Resize canvas
+window.addEventListener('resize',()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
+</script>
+</body>
+</html>
