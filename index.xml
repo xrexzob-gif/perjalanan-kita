@@ -76,9 +76,9 @@
 </audio>
 
 <script>
-  // Start music otomatis
+  // Mulai musik otomatis (jika browser blokir, klik tombol)
   const bgm = document.getElementById('bgm');
-  bgm.play().catch(()=>{ /* browser mungkin blok autoplay */ });
+  bgm.play().catch(()=>{ /* autoplay bisa diblok browser */ });
 
   // LocalStorage untuk pesan
   let messages = JSON.parse(localStorage.getItem("loveMsgs")) || [];
@@ -120,7 +120,7 @@
     ctx.fill();
   }
 
-  // Bintang acak otomatis
+  // Bintang otomatis
   setInterval(() => { createStar(); }, 500);
 
   // Hati jatuh
