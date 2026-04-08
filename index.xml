@@ -3,91 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Hub Pribadi</title>
+    <title>TikTok Downloader - No WM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-        .chat-container { height: calc(100vh - 140px); }
-        .bubble { max-width: 85%; padding: 12px 16px; border-radius: 18px; margin-bottom: 12px; animation: fadeIn 0.3s ease; }
-        .ai { background: #1e293b; color: #38bdf8; align-self: flex-start; border: 1px solid #334155; border-bottom-left-radius: 2px; }
-        .user { background: #3b82f6; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { background: #010101; color: white; font-family: sans-serif; }
+        .pink-glow { text-shadow: 0 0 10px #fe2c55, 0 0 20px #fe2c55; }
+        .tiktok-btn { background: #fe2c55; transition: 0.3s; }
+        .tiktok-btn:hover { background: #ef2950; box-shadow: 0 0 15px #fe2c55; }
     </style>
 </head>
-<body class="flex flex-col h-screen">
+<body class="flex flex-col items-center justify-center min-h-screen p-5">
 
-    <header class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
-        <div class="flex items-center gap-2">
-            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="font-bold tracking-tighter text-xl">AI_HUB<span class="text-blue-500">.GUE</span></span>
-        </div>
-        <span class="text-xs text-slate-500 font-mono">MODEL: GEMINI-1.5-FLASH</span>
-    </header>
-    
-    <div id="chat-box" class="chat-container overflow-y-auto p-4 flex flex-col">
-        <div class="bubble ai text-sm">
-            Siap bos! Gue udah aktif pake kunci lo. Mau nanya apa atau mau gue temenin gabut?
-        </div>
-    </div>
+    <div class="max-w-md w-full text-center">
+        <h1 class="text-4xl font-black mb-2 pink-glow">TIK-DL</h1>
+        <p class="text-gray-400 mb-8 text-sm uppercase tracking-widest">Download Video Tanpa Watermark</p>
 
-    <div class="p-4 bg-slate-900/80 border-t border-slate-800">
-        <div class="max-w-4xl mx-auto flex gap-3">
-            <input id="input" type="text" 
-                class="flex-1 bg-slate-800 p-4 rounded-2xl outline-none border border-slate-700 focus:border-blue-500 text-sm transition-all" 
-                placeholder="Tulis pesan di sini..."
-                onkeypress="if(event.key === 'Enter') tanyaAI()">
-            <button onclick="tanyaAI()" 
-                class="bg-blue-600 hover:bg-blue-500 active:scale-95 px-6 py-3 rounded-2xl font-bold transition-all flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                </svg>
+        <div class="space-y-4">
+            <input id="videoUrl" type="text" 
+                class="w-full bg-gray-900 border border-gray-800 p-4 rounded-xl outline-none focus:border-pink-500 transition-all text-sm" 
+                placeholder="Tempel link video TikTok di sini...">
+            
+            <button onclick="downloadVideo()" id="btnText"
+                class="w-full tiktok-btn p-4 rounded-xl font-bold uppercase tracking-wider">
+                Ambil Video
             </button>
+        </div>
+
+        <div id="result" class="mt-10 hidden border border-gray-800 p-5 rounded-2xl bg-gray-900/50">
+            <img id="thumb" src="" class="w-full rounded-lg mb-4 border border-gray-700">
+            <h3 id="author" class="font-bold text-pink-400 mb-4"></h3>
+            <a id="downloadLink" href="" target="_blank"
+                class="block w-full bg-white text-black p-3 rounded-lg font-bold hover:bg-gray-200 transition">
+                DOWNLOAD SEKARANG (NO WM)
+            </a>
+        </div>
+
+        <div id="loading" class="mt-5 hidden text-pink-500 animate-pulse text-sm">
+            Lagi nyari videonya, sabar bos...
         </div>
     </div>
 
     <script>
-        // Kunci lo udah gue tanem di sini, ajg gila tolol banget gue emang sori! wkwk
-        const API_KEY = "AIzaSyCJ6DBUFXgo-FY-Fqbmmo9eo5u9GRCu2N4"; 
+        async function downloadVideo() {
+            const url = document.getElementById('videoUrl').value;
+            const btn = document.getElementById('btnText');
+            const result = document.getElementById('result');
+            const loading = document.getElementById('loading');
 
-        async function tanyaAI() {
-            const input = document.getElementById('input');
-            const chatBox = document.getElementById('chat-box');
-            if(!input.value.trim()) return;
+            if (!url) {
+                alert("Masukin linknya dulu anjir!");
+                return;
+            }
 
-            const userText = input.value;
-            
-            // Render Chat User
-            chatBox.innerHTML += `<div class="bubble user text-sm">${userText}</div>`;
-            input.value = '';
-            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-
-            // Render Loading AI
-            const loadingId = "loading-" + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="bubble ai text-sm animate-pulse">Ngetik...</div>`;
-            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+            // Reset & Loading
+            result.classList.add('hidden');
+            loading.classList.remove('hidden');
+            btn.disabled = true;
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ "contents": [{ "parts": [{ "text": userText }] }] })
-                });
-
+                // Kita pake API gratis dari Tikwm
+                const response = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
                 const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                
-                // Hapus loading, ganti jawaban asli
-                document.getElementById(loadingId).remove();
-                chatBox.innerHTML += `<div class="bubble ai text-sm">${aiText.replace(/\n/g, '<br>')}</div>`;
+
+                if (data.code === 0) {
+                    // Berhasil ambil data
+                    document.getElementById('thumb').src = "https://www.tikwm.com" + data.data.cover;
+                    document.getElementById('author').innerText = "@" + data.data.author.unique_id;
+                    document.getElementById('downloadLink').href = "https://www.tikwm.com" + data.data.play;
+                    
+                    result.classList.remove('hidden');
+                } else {
+                    alert("Link salah atau video gak ketemu!");
+                }
             } catch (err) {
-                document.getElementById(loadingId).innerHTML = `<span class="text-red-400">Error: Cek koneksi atau API Key lo!</span>`;
+                alert("Waduh, koneksi ke servernya lagi lemot!");
+            } finally {
+                loading.classList.add('hidden');
+                btn.disabled = false;
             }
-            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
         }
     </script>
+
 </body>
 </html>
