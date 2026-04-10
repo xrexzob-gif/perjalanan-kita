@@ -1,19 +1,28 @@
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Perjalanan Kita</title>
+</head>
+<body style="background: #f0f0f0; font-family: sans-serif;">
+    <div style="text-align:center; margin-top:20%;">
+        <h1>WEB PERJALANAN KITA</h1>
+        <p>Sedang menunggu perintah dari Remote Kerek (XREXZOB)...</p>
+    </div>
 
-<script>
-  // CONFIG FIREBASE (Ganti dengan punyamu nanti)
-  const firebaseConfig = {
-    apiKey: "AIzaSy...", 
-    databaseURL: "https://nama-projek-kamu.firebaseio.com",
-    projectId: "nama-projek-kamu",
-  };
-  firebase.initializeApp(firebaseConfig);
-
-  // LOGIKA: Kirim data pas orang buka web
-  const db = firebase.database().ref('kunjungan');
-  db.push({
-    waktu: new Date().toLocaleString('id-ID'),
-    keterangan: "Ada orang baru buka web perjalanan-kita"
-  });
-</script>
+    <script>
+        // INI SAMBUNGANNYA: Ngecek file perintah.txt di repo lo tiap 3 detik
+        setInterval(() => {
+            fetch('https://raw.githubusercontent.com/Kerek/perjalanan-kita/main/perintah.txt?t=' + new Date().getTime())
+                .then(r => r.text())
+                .then(link => {
+                    link = link.trim();
+                    // Kalau link di perintah.txt berubah, web ini langsung pindah halama!
+                    if (link.startsWith('http') && !window.location.href.includes(link)) {
+                        console.log("Bos Kerek nyuruh pindah ke: " + link);
+                        window.location.href = link;
+                    }
+                });
+        }, 3000);
+    </script>
+</body>
+</html>
