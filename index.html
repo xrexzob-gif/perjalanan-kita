@@ -1,177 +1,19 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>xrexzob AI</title>
-<style>
-body{background:#0f0f0f;color:#fff;font-family:Arial}
-#chat{max-width:700px;margin:30px auto}
-.msg{padding:10px;margin:5px;border-radius:10px}
-.user{background:#333;text-align:right}
-.ai{background:#1e1e1e}
-input{width:80%;padding:12px}
-button{padding:12px}
-</style>
-</head>
-<body>
-
-<div id="chat">
-<h2>xrexzob AI</h2>
-<div id="messages"></div>
-<input id="input" placeholder="Ngomong aja bebas...">
-<button onclick="send()">Kirim</button>
-</div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
+  // CONFIG FIREBASE (Ganti dengan punyamu nanti)
+  const firebaseConfig = {
+    apiKey: "AIzaSy...", 
+    databaseURL: "https://nama-projek-kamu.firebaseio.com",
+    projectId: "nama-projek-kamu",
+  };
+  firebase.initializeApp(firebaseConfig);
 
-// 🧠 KARAKTER XREXZOB
-const persona = {
- name:"xrexzob",
- style:[
-  "Gue bilang ya,",
-  "Denger nih,",
-  "Menurut gue,",
-  "Gini loh,",
-  "Simple aja,"
- ],
- moodSantai:[
-  "Santai aja,",
-  "Gak usah panik,",
-  "Pelan-pelan,",
- ],
- moodGas:[
-  "Gas aja,",
-  "Jangan ragu,",
-  "Langsung jalan,",
- ],
- moodSokPinter:[
-  "Secara logika,",
-  "Kalau dipikir,",
-  "Sebenarnya,",
- ]
-};
-
-// 🧠 SAPAAN
-window.onload = () => {
- addMsg("Woy 👋 gue xrexzob. Mau nanya apa? Gue jawab sebisanya, santai aja.","ai");
-};
-
-// 🧠 RANDOM PICK
-function pick(arr){
- return arr[Math.floor(Math.random()*arr.length)];
-}
-
-// 🧠 BIKIN JAWABAN JADI “HIDUP”
-function makeStyle(text){
- return pick(persona.style) + " " + text;
-}
-
-// 🧠 MATEMATIKA
-function mathAI(input){
- try{
-  let clean = input.replace(/[^0-9+\-*/().]/g,"");
-  if(clean){
-   let result = eval(clean);
-   return makeStyle("hasilnya " + result);
-  }
- }catch(e){}
- return null;
-}
-
-// 🧠 LOGIKA PERTANYAAN
-function smartAI(input){
-
- if(input.includes("kenapa"))
-   return makeStyle("itu biasanya karena ada penyebab tertentu, gak langsung terjadi gitu aja.");
-
- if(input.includes("gimana"))
-   return makeStyle("ada beberapa cara, tergantung kondisi lo.");
-
- if(input.includes("apa itu"))
-   return makeStyle("itu sesuatu yang bisa dijelasin lebih dalam kalau lo spesifik.");
-
- if(input.includes("dimana"))
-   return makeStyle("lokasinya tergantung konteks, jangan setengah-setengah nanya.");
-
- if(input.includes("kapan"))
-   return makeStyle("waktunya tergantung situasi, gak selalu pasti.");
-
- if(input.includes("siapa"))
-   return makeStyle("itu bisa orang atau sesuatu, coba lebih jelas.");
-
- return null;
-}
-
-// 🧠 EMOSI
-function emotionAI(input){
- if(input.includes("sedih")||input.includes("galau"))
-   return pick(persona.moodSantai) + " gue ngerti sih, tapi lo pasti bisa lewat ini.";
-
- if(input.includes("capek"))
-   return "Udah keliatan lo capek, istirahat dulu jangan maksain.";
-
- if(input.includes("bosan")||input.includes("gabut"))
-   return pick(persona.moodGas) + " cari hiburan, jangan diem doang.";
-
- return null;
-}
-
-// 🧠 RESPON UMUM BANYAK
-const randomTalk = [
- "itu menarik sih.",
- "gue ngerti arah pertanyaan lo.",
- "itu bisa dibahas panjang.",
- "gak sesimpel itu sebenernya.",
- "tergantung situasi juga.",
- "itu ada banyak kemungkinan.",
- "lo harus liat dari sudut lain juga."
-];
-
-// 🧠 GENERATOR BESAR
-const words = ["apa","kenapa","gimana","hidup","uang","game","belajar","kerja","cinta"];
-let generated = [];
-
-for(let i=0;i<7000;i++){
- generated.push(words[i%words.length]+i);
-}
-
-// 🧠 CHAT
-function send(){
- let input = document.getElementById("input").value.toLowerCase();
- addMsg(input,"user");
-
- let reply = null;
-
- reply = mathAI(input);
- if(!reply) reply = emotionAI(input);
- if(!reply) reply = smartAI(input);
-
- if(!reply){
-   for(let w of generated){
-     if(input.includes(w)){
-       reply = makeStyle(pick(randomTalk));
-       break;
-     }
-   }
- }
-
- if(!reply){
-   reply = makeStyle(pick(randomTalk));
- }
-
- addMsg(reply,"ai");
- document.getElementById("input").value="";
-}
-
-// 🧠 UI
-function addMsg(text,type){
- let div=document.createElement("div");
- div.className="msg "+type;
- div.innerText=text;
- document.getElementById("messages").appendChild(div);
-}
-
+  // LOGIKA: Kirim data pas orang buka web
+  const db = firebase.database().ref('kunjungan');
+  db.push({
+    waktu: new Date().toLocaleString('id-ID'),
+    keterangan: "Ada orang baru buka web perjalanan-kita"
+  });
 </script>
-
-</body>
-</html>
