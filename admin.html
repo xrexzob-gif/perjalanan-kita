@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>Monitor Pengunjung</title></head>
+<body>
+  <h2>Siapa aja yang masuk?</h2>
+  <div id="logs" style="font-family: monospace;"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSy...", // SAMAKAN DENGAN DI INDEX
+        databaseURL: "https://nama-projek-kamu.firebaseio.com",
+        projectId: "nama-projek-kamu",
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.database().ref('kunjungan');
+    // Pantau secara live
+    db.on('child_added', (snapshot) => {
+      const data = snapshot.val();
+      const p = document.createElement('p');
+      p.innerText = "➤ [" + data.waktu + "] " + data.keterangan;
+      document.getElementById('logs').prepend(p);
+    });
+  </script>
+</body>
+</html>
